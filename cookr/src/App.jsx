@@ -49,20 +49,25 @@ const SIDEBAR_W = 248;
 
 // ── Groq API call helper ──
 async function askGroq(messages) {
-  const res = await fetch("/groq/openai/v1/chat/completions", {
+  const res = await fetch("/api/chat", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`
     },
     body: JSON.stringify({
       model: "llama-3.3-70b-versatile",
       max_tokens: 1024,
       temperature: 0.7,
-      messages
-    })
+      messages,
+    }),
   });
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}`);
+  }
+
   const data = await res.json();
+
   return data.choices[0].message.content;
 }
 
